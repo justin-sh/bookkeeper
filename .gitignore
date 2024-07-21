@@ -7,3 +7,7 @@ client/node_modules/
 
 
 .env
+
+**/__pycache__/
+*.db
+*.json

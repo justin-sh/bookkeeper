@@ -1,21 +1,22 @@
-from flask import Blueprint, request, jsonify, current_app as app
+from flask import Blueprint, request, jsonify, current_app as app, session
 
 from db import db
 
 bp = Blueprint('accounts', __name__, url_prefix='/accounts')
 
 @bp.route('/')
-def users():
-    res = db.execute("SELECT name FROM accounts")
-#     app.logger.info(res.fetchmany())
-    return jsonify(res.fetchmany(size=100))
+def accounts():
+    res = db.execute("SELECT name FROM accounts where user_id=?", (session['user_id'],))
+    return jsonify({'ok':True, 'data': [ { 'name': u['name'] } for u in res.fetchmany(size=100) ]})
 
 @bp.route('/add', methods=['POST'])
-def userAdd():
+def accountsAdd():
     data =  request.get_json()
 #     app.logger.info(data)
-    sqlInsert = 'insert into accounts(name,passwd,sec_tip,sec_ans) values(?,?,?,?)'
-    db.execute(sqlInsert,(data['name'],data['passwd'],data['sec_tip'],data['sec_ans']))
-    con.commit()
-#     app.logger.info(db.lastrowid)
-    return jsonify(db.lastrowid)
+    data['currency'] = data['currency'] or 'USD'
+    data['balance'] = data['balance'] or 0 # cent
+    sqlInsert = 'insert into accounts(user_id,currency,name,note,balance) values(?,?,?,?,?)'
+    params = (session['user_id'], data['currency'], data['name'], data['note'], data['balance'])
+    db.execute(sqlInsert, params)
+    db.connection.commit()
+    return jsonify({'ok':True, 'data': db.lastrowid})

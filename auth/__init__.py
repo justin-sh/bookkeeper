@@ -31,7 +31,7 @@ def register():
 #     app.logger.info(data)
     sqlInsert = 'insert into users(name,passwd,sec_tip,sec_ans) values(?,?,?,?)'
     db.execute(sqlInsert,(data['name'],bcrypt.generate_password_hash(data['passwd']).decode('utf-8'),data['sec_tip'],data['sec_ans']))
-    con.commit()
+    db.connection.commit()
 
     session.clear()
     session['user_id'] = db.lastrowid
@@ -39,8 +39,8 @@ def register():
     return jsonify({'ok':True, 'data': {'name':data['name']}})
 
 
-@bp.route('/')
-def users():
-    res = db.execute("SELECT * FROM users")
-#     app.logger.info(res.fetchmany())
-    return jsonify([ { 'name': u['name'] } for u in res.fetchmany(size=100) ])
+# @bp.route('/')
+# def users():
+#     res = db.execute("SELECT * FROM users")
+# #     app.logger.info(res.fetchmany())
+#     return jsonify([ { 'name': u['name'] } for u in res.fetchmany(size=100) ])

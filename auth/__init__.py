@@ -14,7 +14,7 @@ def login():
 #     app.logger.info(data['username'])
 #     app.logger.info('passwd=' + data['passwd'])
 #     app.logger.info(bcrypt.generate_password_hash(data['passwd']).decode('utf-8'))
-    user = db.execute("SELECT * FROM users where name=?", (data['username'],)).fetchone()
+    user = db.execute("SELECT * FROM users where name=?", (data['name'],)).fetchone()
     app.logger.info(user)
     if user is None or not bcrypt.check_password_hash(user['passwd'], data['passwd']):
         return jsonify({'ok':True, 'errorMsg':"login failed!"})

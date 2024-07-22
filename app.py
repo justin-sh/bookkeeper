@@ -18,7 +18,7 @@ def create_app():
     app.register_blueprint(acc_bp)
 
     # enable CORS
-    CORS(app, resources={r'/*': {'origins': '*'}})
+    CORS(app, resources={r'/*': {'origins': '*','allow_headers':'*',"expose_headers": "*","supports_credentials":True}})
     return app
 
 app = create_app()

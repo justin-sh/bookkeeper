@@ -25,6 +25,36 @@
                  v-model="form.passwd"/>
         </div>
       </div>
+      <div class="flex flex-row mt-3 items-center">
+        <div class="w-1/3">
+          <label for="repassword" class="">re-Password:</label>
+        </div>
+        <div class="w-2/3">
+          <input type="password" id="repassword" name="repassword"
+                 class="w-full rounded-md border-0 py-1.5 pl-3 pr-5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                 v-model="repasswd"/>
+        </div>
+      </div>
+      <div class="flex flex-row mt-3 items-center">
+        <div class="w-1/3">
+          <label for="sectip" class="">Sec Tip:</label>
+        </div>
+        <div class="w-2/3">
+          <input id="sectip" name="sectip"
+                 class="w-full rounded-md border-0 py-1.5 pl-3 pr-5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                 v-model="form.passwd"/>
+        </div>
+      </div>
+      <div class="flex flex-row mt-3 items-center">
+        <div class="w-1/3">
+          <label for="secans" class="">Sec Ans:</label>
+        </div>
+        <div class="w-2/3">
+          <input id="secans" name="secans"
+                 class="w-full rounded-md border-0 py-1.5 pl-3 pr-5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                 v-model="form.passwd"/>
+        </div>
+      </div>
       <div class="flex flex-row justify-center mt-3 text-center bg-red-300">
 <!--        <p v-if="form.showError" id="error" class="font-bold text-black">Username or Password is incorrect</p>-->
       </div>
@@ -32,7 +62,7 @@
         <div class="">
           <button type="submit"
                   class="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-            Submit
+            Register
           </button>
         </div>
       </div>
@@ -43,12 +73,13 @@
 <script lang="ts" setup>
 
 import {useUserStore} from "@/stores/user";
-import {type LoginForm} from "@/api";
-import {reactive} from "vue";
+import {type User, userRegister} from "@/api";
+import {reactive, ref} from "vue";
 
 const user = useUserStore()
 
-const form: LoginForm = reactive({name: '', passwd: ''})
+const repasswd:string = ref('')
+const form: User = reactive({name: '', passwd: ''})
 
 const submit = async () => {
   const succeed = await user.login(form)

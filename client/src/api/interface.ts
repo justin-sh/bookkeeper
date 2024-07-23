@@ -5,6 +5,7 @@ export interface LoginForm {
 
 export interface User {
     name: string,
+    passwd?:string,
     sec_tip?: string,
     sec_ans?: string
 }

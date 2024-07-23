@@ -33,10 +33,11 @@ def register():
     db.execute(sqlInsert,(data['name'],bcrypt.generate_password_hash(data['passwd']).decode('utf-8'),data['sec_tip'],data['sec_ans']))
     db.connection.commit()
 
-    session.clear()
-    session['user_id'] = db.lastrowid
+    # session.clear()
+    # session['user_id'] = db.lastrowid
 #     app.logger.info(db.lastrowid)
-    return jsonify({'ok':True, 'data': {'name':data['name']}})
+    # return jsonify({'ok':True, 'data': {'name':data['name']}})
+    return jsonify({'ok':True})
 
 
 # @bp.route('/')

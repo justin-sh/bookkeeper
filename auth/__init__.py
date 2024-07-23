@@ -28,10 +28,10 @@ def login():
 def register():
     bcrypt = Bcrypt(app)
     data = request.get_json()
+    hashed_pwd = bcrypt.generate_password_hash(data['passwd']).decode('utf-8')
     #     app.logger.info(data)
-    sqlInsert = 'insert into users(name,passwd,sec_tip,sec_ans) values(?,?,?,?)'
-    db.execute(sqlInsert, (
-    data['name'], bcrypt.generate_password_hash(data['passwd']).decode('utf-8'), data['sec_tip'], data['sec_ans']))
+    sql_insert = 'insert into users(name,passwd,sec_tip,sec_ans) values(?,?,?,?)'
+    db.execute(sql_insert, (data['name'], hashed_pwd, data['sec_tip'], data['sec_ans']))
     db.connection.commit()
 
     # session.clear()

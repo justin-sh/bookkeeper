@@ -9,36 +9,36 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 @bp.route('/login', methods=['POST'])
 def login():
     bcrypt = Bcrypt(app)
-    data =  request.get_json()
-#     app.logger.info(data)
-#     app.logger.info(data['username'])
-#     app.logger.info('passwd=' + data['passwd'])
-#     app.logger.info(bcrypt.generate_password_hash(data['passwd']).decode('utf-8'))
+    data = request.get_json()
+    #     app.logger.info(data)
+    #     app.logger.info(data['username'])
+    #     app.logger.info('passwd=' + data['passwd'])
+    #     app.logger.info(bcrypt.generate_password_hash(data['passwd']).decode('utf-8'))
     user = db.execute("SELECT * FROM users where name=?", (data['name'],)).fetchone()
     app.logger.info(user)
     if user is None or not bcrypt.check_password_hash(user['passwd'], data['passwd']):
-        return jsonify({'ok':True, 'errorMsg':"login failed!"})
+        return jsonify({'ok': True, 'errorMsg': "login failed!"})
 
     session.clear()
     session['user_id'] = user['id']
-    return jsonify({'ok':True, 'data': {'name':user['name']}})
+    return jsonify({'ok': True, 'data': {'name': user['name']}})
 
 
 @bp.route('/register', methods=['POST'])
 def register():
     bcrypt = Bcrypt(app)
-    data =  request.get_json()
-#     app.logger.info(data)
+    data = request.get_json()
+    #     app.logger.info(data)
     sqlInsert = 'insert into users(name,passwd,sec_tip,sec_ans) values(?,?,?,?)'
-    db.execute(sqlInsert,(data['name'],bcrypt.generate_password_hash(data['passwd']).decode('utf-8'),data['sec_tip'],data['sec_ans']))
+    db.execute(sqlInsert, (
+    data['name'], bcrypt.generate_password_hash(data['passwd']).decode('utf-8'), data['sec_tip'], data['sec_ans']))
     db.connection.commit()
 
     # session.clear()
     # session['user_id'] = db.lastrowid
-#     app.logger.info(db.lastrowid)
+    #     app.logger.info(db.lastrowid)
     # return jsonify({'ok':True, 'data': {'name':data['name']}})
-    return jsonify({'ok':True})
-
+    return jsonify({'ok': True})
 
 # @bp.route('/')
 # def users():

@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify
@@ -11,12 +12,16 @@ def create_app():
     _app = Flask(__name__)
     _app.config.from_object(__name__)
 
-    _app.secret_key = os.getenv('SECRET_KEY')
+    _app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+    _app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=float(os.getenv('REMEMBER_COOKIE_DURATION_DAYS')))
+    _app.config['REMEMBER_COOKIE_REFRESH_EACH_REQUEST'] = True
 
-    from auth import bp as auth_bp
+    from auth import bp as auth_bp, login_manager
     from accounts import bp as acc_bp
     _app.register_blueprint(auth_bp)
     _app.register_blueprint(acc_bp)
+
+    login_manager.init_app(_app)
 
     # enable CORS
     CORS(_app,

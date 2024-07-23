@@ -1,14 +1,11 @@
 class User:
 
-    def __init__(self, user_row: dict):
-        if 'id' not in user_row:
-            self.id = 0
-            return
-        self.id = user_row['id']
-        self.name = user_row['name']
-        self.passwd = user_row['passwd']
-        self.sec_tip = user_row['sec_tip']
-        self.sec_ans = user_row['sec_ans']
+    def __init__(self, user_id=0, name=None, passwd=None, sec_tip=None, sec_ans=None):
+        self.id = user_id
+        self.name = name
+        self.passwd = passwd
+        self._sec_tip = sec_tip
+        self._sec_ans = sec_ans
 
     @property
     def is_authenticated(self) -> bool:

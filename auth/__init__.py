@@ -1,14 +1,14 @@
+from http import HTTPStatus
+
 from flask import Blueprint, request, jsonify, current_app as app, session, abort
 from flask_bcrypt import Bcrypt
-from flask_login import LoginManager
+from flask_login import LoginManager, login_user, logout_user
 
-from http import HTTPStatus
 
 from db import db
 from .user import User
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
-
 login_manager = LoginManager()
 
 
@@ -34,14 +34,24 @@ def login():
     #     app.logger.info(data['username'])
     #     app.logger.info('passwd=' + data['passwd'])
     #     app.logger.info(bcrypt.generate_password_hash(data['passwd']).decode('utf-8'))
-    u = db.execute("SELECT * FROM users where name=?", (data['name'],)).fetchone()
+    r = db.execute("SELECT * FROM users where name=?", (data['name'],)).fetchone()
     # app.logger.info(user)
-    if u is None or not bcrypt.check_password_hash(u['passwd'], data['passwd']):
+    if r is None or not bcrypt.check_password_hash(r['passwd'], data['passwd']):
         return jsonify({'ok': True, 'errorMsg': "login failed!"})
 
     session.clear()
-    session['user_id'] = u['id']
-    return jsonify({'ok': True, 'data': {'name': u['name']}})
+
+    u = User(r['id'], r['name'], r['passwd'], r['sec_tip'], r['sec_ans'])
+    login_user(u, remember=True)
+
+    # session['user_id'] = r['id']
+    return jsonify({'ok': True, 'data': {'name': r['name']}})
+
+
+@bp.route('/logout')
+def logout():
+    logout_user()
+    return jsonify({'ok': True})
 
 
 @bp.route('/register', methods=['POST'])

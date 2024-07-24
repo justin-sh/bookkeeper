@@ -4,8 +4,8 @@ class User:
         self.id = user_id
         self.name = name
         self.passwd = passwd
-        self._sec_tip = sec_tip
-        self._sec_ans = sec_ans
+        self.sec_tip = sec_tip
+        self.sec_ans = sec_ans
 
     @property
     def is_authenticated(self) -> bool:

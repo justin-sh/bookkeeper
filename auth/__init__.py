@@ -2,8 +2,7 @@ from http import HTTPStatus
 
 from flask import Blueprint, request, jsonify, current_app as app, session, abort
 from flask_bcrypt import Bcrypt
-from flask_login import LoginManager, login_user, logout_user
-
+from flask_login import LoginManager, login_user, logout_user, current_user
 
 from db import db
 from .user import User
@@ -16,7 +15,7 @@ login_manager = LoginManager()
 def load_user(user_id: str) -> User | None:
     user_row = db.execute('SELECT * FROM users where id=?', (int(user_id),)).fetchone()
     if user_row:
-        return User(user_row)
+        return User(user_row['id'], user_row['name'], user_row['passwd'], user_row['sec_tip'], user_row['sec_ans'])
 
     return None
 
@@ -30,14 +29,14 @@ def unauthorized():
 def login():
     bcrypt = Bcrypt(app)
     data = request.get_json()
-    #     app.logger.info(data)
+    app.logger.info(data)
     #     app.logger.info(data['username'])
     #     app.logger.info('passwd=' + data['passwd'])
     #     app.logger.info(bcrypt.generate_password_hash(data['passwd']).decode('utf-8'))
     r = db.execute("SELECT * FROM users where name=?", (data['name'],)).fetchone()
-    # app.logger.info(user)
+    # app.logger.info(r)
     if r is None or not bcrypt.check_password_hash(r['passwd'], data['passwd']):
-        return jsonify({'ok': True, 'errorMsg': "login failed!"})
+        return jsonify({'errorMsg': "login failed!"})
 
     session.clear()
 
@@ -45,7 +44,7 @@ def login():
     login_user(u, remember=True)
 
     # session['user_id'] = r['id']
-    return jsonify({'ok': True, 'data': {'name': r['name']}})
+    return jsonify({'name': r['name']})
 
 
 @bp.route('/logout')
@@ -70,8 +69,9 @@ def register():
     # return jsonify({'ok':True, 'data': {'name':data['name']}})
     return jsonify({'ok': True})
 
-# @bp.route('/')
-# def users():
-#     res = db.execute("SELECT * FROM users")
-# #     app.logger.info(res.fetchmany())
-#     return jsonify([ { 'name': u['name'] } for u in res.fetchmany(size=100) ])
+
+@bp.route('/user-info')
+def current_userinfo():
+    if current_user is None:
+        return jsonify({})
+    return jsonify({'name': current_user.name})

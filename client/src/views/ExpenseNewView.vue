@@ -1,6 +1,6 @@
 <template>
 
-  <header class="p-2 sticky top-0 bg-stone-200 relative flex flex-row">
+  <header class="p-2 sticky top-0 bg-stone-200 relative flex flex-row z-50">
     <div class="flex-none"><button @click.stop="back" class="px-4">&lt;</button></div>
     <h1 class="text-center font-bold inline-block flex-1">Add Expenses</h1>
   </header>

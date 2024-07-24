@@ -1,7 +1,7 @@
 <template>
 
 
-  <header class="p-2 sticky top-0 bg-stone-200 relative">
+  <header class="p-2 sticky top-0 bg-stone-200 relative z-50">
     <h1 class="text-center font-bold inline-block">Bookkeeper Expenses </h1>
     <button class="button font-bold text-2xl absolute right-5" @click.stop="addNew()"> + </button>
   </header>

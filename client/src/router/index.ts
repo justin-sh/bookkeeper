@@ -4,6 +4,7 @@ import ExpenseView from "@/views/ExpenseView.vue"
 import ExpenseNewView from "@/views/ExpenseNewView.vue"
 import LoginView from "@/views/LoginView.vue"
 import RegisterView from "@/views/RegisterView.vue"
+import ListSelectView from "@/views/ListSelectView.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,6 +41,11 @@ const router = createRouter({
                     component: ExpenseNewView,
                 }
             ]
+        },
+        {
+            path: '/list-select/:type',
+            name: 'list-select',
+            component: ListSelectView,
         },
         {
             path: '/about',

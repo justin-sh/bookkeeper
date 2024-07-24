@@ -26,7 +26,7 @@
         </div>
       </div>
       <div class="flex flex-row justify-center mt-3 text-center bg-red-300">
-<!--        <p v-if="form.showError" id="error" class="font-bold text-black">Username or Password is incorrect</p>-->
+        <p v-if="error" id="error" class="font-bold text-black">Username or Password is incorrect</p>
       </div>
       <div class="flex flex-row justify-center mt-3">
         <div class="">
@@ -48,17 +48,23 @@
 
 import {useUserStore} from "@/stores/user";
 import {type LoginForm} from "@/api";
-import {reactive} from "vue";
+import {reactive, ref} from "vue";
+
+const error = ref(false)
 
 const user = useUserStore()
 
-const form: LoginForm = reactive({name: '', passwd: ''})
+const form: LoginForm = reactive({name: '', passwd: '', showError:false})
 
 const submit = async () => {
+  error.value = false
+  // console.log(JSON.stringify(form))
   const succeed = await user.login(form)
 
   if (succeed) {
     location.href = '/'
+  }else{
+    error.value = true
   }
 }
 

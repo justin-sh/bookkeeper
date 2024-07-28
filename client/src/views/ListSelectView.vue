@@ -8,40 +8,52 @@
   </header>
 
   <div class="flex flex-col divide-y">
-    <RowItem v-for="d in data" :key="d.name" @click="select" class="cursor-pointer">
+    <RowItem v-for="d in data" :key="d.id" @click="select(d)" class="cursor-pointer">
       <label class="content-center">{{ d.name }}</label>
-      <label class="content-center pr-2"> {{ d.val }} </label>
     </RowItem>
   </div>
 
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
-import {useRoute, useRouter} from "vue-router";
+import {onMounted, reactive, ref} from "vue";
+import {onBeforeRouteLeave, useRoute, useRouter} from "vue-router";
 
-import RowItem from "../components/Row.vue"
+import RowItem from "@/components/Row.vue"
+import {getOptions} from "@/api";
 
 // defineProps(['type'])
 const emit = defineEmits<{
-  (e: 'itemSelect', value: { name: string, val: string }): void
+  (e: 'itemSelect', value: { name: string, id: number }): void
 }>()
 
-const data = ref([])
+const data = ref<Record<'id' | 'name', any>[]>([])
 
 const router = useRouter()
 const route = useRoute()
 
-function getTypeListData() {
-  const type = route.params.type
+const result = {type: route.params.type, name: "", id: 0}
 
-  data.value = [{name: 'Cash', val: 'cash'}, {name: 'Anz', val: 'anz'}]
+async function getTypeListData() {
+  const type = route.params.type as string
+  const parent = (route.query.parent || '') as string
+
+  data.value = (await getOptions(type, parent)).data
 }
 
 function select(d) {
-  emit('itemSelect', d)
+  result.name = d.name
+  result.id = d.id
+  // emit('itemSelect', d)
   router.back()
 }
+
+onBeforeRouteLeave((to, from) => {
+  console.log(result)
+  console.log(from.path + '->' + to.path)
+  console.log()
+  to.meta.result = result
+})
 
 onMounted(async () => getTypeListData())
 

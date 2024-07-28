@@ -18,8 +18,10 @@ def create_app():
 
     from auth import bp as auth_bp, login_manager
     from accounts import bp as acc_bp
+    from item_options import bp as ip_bp
     _app.register_blueprint(auth_bp)
     _app.register_blueprint(acc_bp)
+    _app.register_blueprint(ip_bp)
 
     login_manager.init_app(_app)
 

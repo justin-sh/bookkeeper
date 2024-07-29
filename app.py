@@ -17,11 +17,13 @@ def create_app():
     _app.config['REMEMBER_COOKIE_REFRESH_EACH_REQUEST'] = True
 
     from auth import bp as auth_bp, login_manager
-    from accounts import bp as acc_bp
-    from item_options import bp as ip_bp
+    from account import bp as acc_bp
+    from item_option import bp as ip_bp
+    from expense import bp as exp_bp
     _app.register_blueprint(auth_bp)
     _app.register_blueprint(acc_bp)
     _app.register_blueprint(ip_bp)
+    _app.register_blueprint(exp_bp)
 
     login_manager.init_app(_app)
 

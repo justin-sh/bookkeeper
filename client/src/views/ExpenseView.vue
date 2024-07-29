@@ -10,7 +10,8 @@
     <div class="flex flex-row justify-between w-full">
       <div class="text-left">
         <font-awesome-icon icon="fa-solid fa-angle-up" size="xs"/>
-        {{ exp.date }}
+<!--        {{ exp.date.toLocaleDateString('en-Au', {year:'numeric',month:'numeric',day:'numeric'}) }}-->
+        {{ formatInTimeZone(exp.date, Intl.DateTimeFormat().resolvedOptions().timeZone, "yyyy/MM/dd") }}
       </div>
       <div class="text-right">{{ exp.totalAmt }}</div>
     </div>
@@ -32,11 +33,15 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {useRouter} from "vue-router";
+import {type Expense, getExpenses} from "@/api";
+import {toZonedTime, formatInTimeZone} from "date-fns-tz";
 
 const router = useRouter()
+
+const localTZ = Intl.DateTimeFormat().resolvedOptions().timeZone
 
 const tData = [
   {
@@ -63,10 +68,17 @@ const tData = [
     ]
   }
 ]
-const data = ref(tData)
+const data = ref<Expense[]>([])
 
 function addNew(){
   router.push("/expenses/new")
 }
+
+onMounted(async ()=>{
+  data.value = (await getExpenses()).data
+
+  console.log()
+  data.value.map((exp)=>{ exp.date = toZonedTime(exp.date, localTZ) })
+})
 
 </script>

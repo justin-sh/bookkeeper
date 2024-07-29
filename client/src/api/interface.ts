@@ -19,3 +19,14 @@ export interface Account {
     note?: string,
     balance: number
 }
+
+export interface Expense {
+  date: Date
+  account: Record<'id' | 'name', any>
+  category: Record<'id' | 'name', any>
+  subcategory: Record<'id' | 'name', any>
+  amount: number
+  currency: Record<'id' | 'name', any>
+  qty: number //cent unit
+  note: string
+}

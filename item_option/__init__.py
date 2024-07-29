@@ -1,6 +1,7 @@
-from flask import Blueprint, request, jsonify, session, current_app as app, g
+from flask import Blueprint, request, jsonify
 from flask_login import current_user
-import accounts
+
+import account
 from db import db
 
 bp = Blueprint('options', __name__, url_prefix='/options')
@@ -11,7 +12,7 @@ def list_options():
     t = request.args.get('type', '', type=str)
 
     if 'account' == t:
-        return accounts.list_accounts()
+        return account.list_accounts()
 
     sql = "SELECT id,name FROM options where user_id in (0, ?) and type=?"
     sql_params = [current_user.id, t]
@@ -23,13 +24,14 @@ def list_options():
     return jsonify([{'name': u['name'], 'id': u['id']} for u in res.fetchmany(size=100)])
 
 
+# todo not complete
 @bp.route('/add')
 def add_options():
     data = request.get_json()
     t = data['type']
 
     if 'account' == t:
-        return accounts.add_account(data)
+        return account.add_account(data)
 
     res = db.execute("SELECT name, desc FROM options where user_id in (0, ?) and type=? order by name",
                      (current_user.id, t))

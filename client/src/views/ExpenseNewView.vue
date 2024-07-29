@@ -14,7 +14,7 @@
       </label>
       <vue-date-picker :ui="{input:'text-right dp_input_imp'}" v-model="exp.date"
                        :enable-time-picker="false" :clearable="false"
-                       format="MMM dd yyyy"
+                       format="d MMM yyyy"
                        position="right"
                        auto-apply hide-input-icon/>
     </RowItem>
@@ -52,37 +52,39 @@
       </div>
     </RowItem>
 
-    <button class="bg-amber-500	">Save and continue</button>
+    <button class="bg-amber-500	" @click.prevent="save">Save and continue</button>
   </div>
 
 </template>
 
 <script setup lang="ts">
-import {onMounted, reactive, ref} from "vue";
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {onBeforeRouteLeave, onBeforeRouteUpdate, useRoute, useRouter} from "vue-router";
+import {onMounted, ref} from "vue";
+import {onBeforeRouteLeave, useRoute, useRouter} from "vue-router";
 import Cache from "@/utils/cache";
+import {type Expense, createExpense} from "@/api";
+
+import {toZonedTime} from "date-fns-tz";
 
 import RowItem from "../components/Row.vue"
 
-interface Expense {
-  date: Date
-  account: Record<'id' | 'name', any>
-  category: Record<'id' | 'name', any>
-  subcategory: Record<'id' | 'name', any>
-  amount: number
-  currency: Record<'id' | 'name', any>
-  qty: number
-  note: string
-}
+// interface Expense {
+//   date: Date
+//   account: Record<'id' | 'name', any>
+//   category: Record<'id' | 'name', any>
+//   subcategory: Record<'id' | 'name', any>
+//   amount: number
+//   currency: Record<'id' | 'name', any>
+//   qty: number
+//   note: string
+// }
 
 const expNew = {
   date: new Date,
-  account: {id: '0', name: ''},
-  category: {id: '0', name: ''},
-  subcategory: {id: '0', name: ''},
+  account: {id: 0, name: ''},
+  category: {id: 0, name: ''},
+  subcategory: {id: 0, name: ''},
   amount: 0,
-  currency: {id: '0', name: ''},
+  currency: {id: 0, name: ''},
   qty: 1,
   note: ''
 }
@@ -102,6 +104,16 @@ function goListSelect(type: string) {
     return
   }
   router.push({name: 'list-select', params: {type}})
+}
+
+async function save() {
+  // const result = (await createExpense(exp.value)).data
+  // console.log(result)
+  console.log(exp.value.date)
+  await createExpense(exp.value)
+
+  // router.back()
+  console.log(toZonedTime(exp.value.date, "Asia/Bangkok").toTimeString()) //Australia/Adelaide
 }
 
 onBeforeRouteLeave((to, from) => {

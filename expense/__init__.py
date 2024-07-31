@@ -16,10 +16,10 @@ def list_expenses():
 
     sql = """SELECT exp.id,exp.user_id,exp.evt_date,exp.account_id,a.name as acc_name,
             exp.cat_id,op.name as cat_name,exp.subcat_id,op2.name as subcat_name,exp.amount,exp.currency_id,exp.note
-             from expenses exp, accounts a, options op, options op2
+             from expenses exp, accounts a, options op
+             LEFT JOIN options op2 ON exp.subcat_id = op2.id
             where exp.account_id = a.id
             and exp.cat_id = op.id
-            and exp.subcat_id = op2.id
             and exp.user_id = ?
             order by evt_date desc"""
     sql_params = [current_user.id]
@@ -28,7 +28,10 @@ def list_expenses():
     #     sql_params.append(request.args.get('parent', '', type=str))
     # sql += " order by evt_date desc"
     res = db.execute(sql, tuple(sql_params))
-    return jsonify([{'id': u['id'], 'user_id': u['user_id'], 'date': u['evt_date'], 'account_id': u['account_id']} for u in res.fetchmany(size=100)])
+    return jsonify([{'id': u['id'], 'user_id': u['user_id'], 'date': u['evt_date'], 'account_id': u['account_id'],
+                     'amount': u['amount'], 'cat_id': u['cat_id'], 'subcat_id': u['subcat_id'],
+                     'currency_id': u['currency_id'], 'note': u['note']}
+                    for u in res.fetchmany(size=100)])
 
 
 # todo not complete

@@ -61,22 +61,10 @@
 import {onMounted, ref} from "vue";
 import {onBeforeRouteLeave, useRoute, useRouter} from "vue-router";
 import Cache from "@/utils/cache";
-import {type Expense, createExpense} from "@/api";
-
-import {toZonedTime} from "date-fns-tz";
+import {type Expense, createExpense, getOptions, getAccounts} from "@/api";
 
 import RowItem from "../components/Row.vue"
 
-// interface Expense {
-//   date: Date
-//   account: Record<'id' | 'name', any>
-//   category: Record<'id' | 'name', any>
-//   subcategory: Record<'id' | 'name', any>
-//   amount: number
-//   currency: Record<'id' | 'name', any>
-//   qty: number
-//   note: string
-// }
 
 const expNew = {
   date: new Date,
@@ -109,11 +97,11 @@ function goListSelect(type: string) {
 async function save() {
   // const result = (await createExpense(exp.value)).data
   // console.log(result)
-  console.log(exp.value.date)
+  // console.log(exp.value.date)
   await createExpense(exp.value)
 
-  // router.back()
-  console.log(toZonedTime(exp.value.date, "Asia/Bangkok").toTimeString()) //Australia/Adelaide
+  router.back()
+  // console.log(toZonedTime(exp.value.date, "Asia/Bangkok").toTimeString()) //Australia/Adelaide
 }
 
 onBeforeRouteLeave((to, from) => {

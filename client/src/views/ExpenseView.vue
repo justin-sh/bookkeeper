@@ -1,30 +1,30 @@
 <template>
 
-
   <header class="p-2 sticky top-0 bg-stone-200 relative z-50">
     <h1 class="text-center font-bold inline-block">Bookkeeper Expenses </h1>
-    <button class="button font-bold text-2xl absolute right-5" @click.stop="addNew()"> + </button>
+    <button class="button font-bold text-2xl absolute right-5" @click.stop="addNew()"> +</button>
   </header>
 
-  <div v-for="exp in data" class="p-2 divide-y">
+  <div v-for="k in data.keys()" class="p-2 divide-y">
     <div class="flex flex-row justify-between w-full">
       <div class="text-left">
         <font-awesome-icon icon="fa-solid fa-angle-up" size="xs"/>
-<!--        {{ exp.date.toLocaleDateString('en-Au', {year:'numeric',month:'numeric',day:'numeric'}) }}-->
-        {{ formatInTimeZone(exp.date, Intl.DateTimeFormat().resolvedOptions().timeZone, "yyyy/MM/dd") }}
+        {{ k }}
       </div>
-      <div class="text-right">{{ exp.totalAmt }}</div>
+      <div class="text-right">${{ data.get(k).totalAmt }}</div>
     </div>
-    <div v-for="d in exp.details" class="bg-white">
+    <div v-for="d in data.get(k).details" v-bind:key="d.id" class="bg-white">
       <div class="flex flex-row  justify-between">
-        <span class="text-left">{{ d.accType }}</span>
-        <span class="text-right">{{ d.amt }}</span>
+        <span class="text-left">{{ accounts[d.account_id] }}</span>
+        <span class="text-right">${{ d.amount }}</span>
       </div>
       <div class="flex flex-row">
-        <span class="w-4/5 text-left">{{ d.cat }}</span>
-        <span class="w-1/5 text-right">{{ d.qty + d.unit }}</span>
+        <span class="w-4/5 text-left">{{ op_items[d.cat_id] }}
+          {{ (d.subcat_id ? '/' + op_items[d.subcat_id] : '') }}
+        </span>
+        <span class="w-1/5 text-right">{{  }}</span>
       </div>
-      <div>
+      <div class="flex justify-start">
         {{ d.note || '&nbsp;' }}
       </div>
     </div>
@@ -36,49 +36,39 @@
 import {onMounted, ref} from "vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {useRouter} from "vue-router";
-import {type Expense, getExpenses} from "@/api";
-import {toZonedTime, formatInTimeZone} from "date-fns-tz";
+import {getAccounts, getAllOptions, getExpenses} from "@/api";
+import {formatInTimeZone} from "date-fns-tz";
 
 const router = useRouter()
 
 const localTZ = Intl.DateTimeFormat().resolvedOptions().timeZone
 
-const tData = [
-  {
-    date: '16/07/2024',
-    totalAmt: 30000,
-    details: [
-      {accType: 'Cash', amt: 7.9, cat: 'Food', subCat: 'Convenience Food', qty: 1, unit: 'pack', note: ''},
-      {accType: 'Cash', amt: 4, cat: 'Food', subCat: '', qty: 2, unit: 'bottle', note: ''}
-    ]
-  },
-  {
-    date: '15/07/2024',
-    totalAmt: 3,
-    details: [
-      {accType: 'Cash', amt: 7.9, cat: 'Food', subCat: 'Convenience Food', qty: 1, unit: 'pack', note: ''},
-    ]
-  },
-  {
-    date: '14/07/2024',
-    totalAmt: 3,
-    details: [
-      {accType: 'Cash', amt: 7.9, cat: 'Food', subCat: 'Convenience Food', qty: 1, unit: 'pack', note: ''},
-      {accType: 'Cash', amt: 4, cat: 'Food', subCat: '', qty: 2, unit: 'bottle', note: ''}
-    ]
-  }
-]
-const data = ref<Expense[]>([])
+const data = ref<Map<string, any>>(new Map<string, any>())
 
-function addNew(){
+let accounts = {}
+let op_items = {}
+
+function addNew() {
   router.push("/expenses/new")
 }
 
-onMounted(async ()=>{
-  data.value = (await getExpenses()).data
+onMounted(async () => {
+  (await getAccounts()).data.forEach(x => accounts[x.id] = x.name);
+  (await getAllOptions()).data.forEach(x => op_items[x.id] = x.name);
 
-  console.log()
-  data.value.map((exp)=>{ exp.date = toZonedTime(exp.date, localTZ) })
+  const result = (await getExpenses()).data
+
+  result.forEach(d => {
+    const key = formatInTimeZone(d.date, localTZ, "yyyy/MM/dd") as string
+
+    if (data.value.has(key)) {
+      const s = data.value.get(key)
+      s.totalAmt += d.amount
+      s.details.push(d)
+    } else {
+      data.value.set(key, {totalAmt: d.amount, 'details': [d]})
+    }
+  })
 })
 
 </script>

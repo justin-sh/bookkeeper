@@ -25,6 +25,15 @@ def list_options():
     return jsonify([{'name': u['name'], 'id': u['id']} for u in res.fetchmany(size=100)])
 
 
+@bp.route('/all')
+@login_required
+def list_all_options():
+    sql = "SELECT id,name FROM options where user_id in (0, ?) order by type, name"
+    sql_params = [current_user.id,]
+    res = db.execute(sql, tuple(sql_params))
+    return jsonify([{'name': u['name'], 'id': u['id']} for u in res.fetchmany(size=100)])
+
+
 # todo not complete
 @bp.route('/add')
 @login_required

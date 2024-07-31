@@ -10,6 +10,7 @@ export const userRegister = (data: User) => axios.post<User>('/auth/register', d
 export const getUserInfo = () => axios.get<User>('/auth/user-info')
 
 export const getAccounts = () => axios.get<Account[]>('/accounts/')
+export const getAllOptions = () => axios.get<Record<'id' | 'name', any>[]>('/options/all')
 export const getOptions = (type: string, parent: string) => axios.get<Record<'id' | 'name', any>[]>('/options/', {
         params: {
             type,

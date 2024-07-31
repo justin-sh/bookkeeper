@@ -14,7 +14,7 @@
       </label>
       <vue-date-picker :ui="{input:'text-right dp_input_imp'}" v-model="exp.date"
                        :enable-time-picker="false" :clearable="false"
-                       format="d MMM yyyy"
+                       format="yyyy/MM/dd"
                        position="right"
                        auto-apply hide-input-icon/>
     </RowItem>

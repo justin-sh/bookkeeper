@@ -118,9 +118,9 @@ onBeforeRouteLeave((to, from) => {
 })
 
 onMounted(() => {
-  console.log("meta")
-  console.log(route.meta.result)
-  console.log("meta")
+  // console.log("meta")
+  // console.log(route.meta.result)
+  // console.log("meta")
   const selectResult = route.meta.result
   const expCache = Cache.get("expnew") || {}
   // if (!expCache) {
@@ -129,8 +129,8 @@ onMounted(() => {
     expCache[selectResult.type] = selectResult
   }
   // }
-  console.log("restore from cache")
-  console.log(expCache)
+  // console.log("restore from cache")
+  // console.log(expCache)
   exp.value = {...exp.value, ...expCache}
 })
 </script>

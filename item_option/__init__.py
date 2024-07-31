@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_login import current_user
+from flask_login import current_user, login_required
 
 import account
 from db import db
@@ -8,6 +8,7 @@ bp = Blueprint('options', __name__, url_prefix='/options')
 
 
 @bp.route('/')
+@login_required
 def list_options():
     t = request.args.get('type', '', type=str)
 
@@ -26,6 +27,7 @@ def list_options():
 
 # todo not complete
 @bp.route('/add')
+@login_required
 def add_options():
     data = request.get_json()
     t = data['type']

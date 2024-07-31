@@ -1,13 +1,13 @@
 from flask import Blueprint, request, jsonify
-from flask_login import current_user
+from flask_login import current_user, login_required
 
-import account
 from db import db
 
 bp = Blueprint('expenses', __name__, url_prefix='/expenses')
 
 
 @bp.route('/')
+@login_required
 def list_expenses():
     # t = request.args.get('type', '', type=str)
 

@@ -20,7 +20,7 @@ def add_account(data):
     #     app.logger.info(data)
     data['currency'] = data['currency'] or 'USD'
     data['balance'] = data['balance'] or 0  # cent
-    sql_insert = 'insert into accounts(user_id,currency,name,note,balance) values(?,?,?,?,?)'
+    sql_insert = 'insert into accounts(user_id,currency,name,desc,balance) values(?,?,?,?,?)'
     params = (current_user.id, data['currency'], data['name'], data['note'], data['balance'])
     db.execute(sql_insert, params)
     db.connection.commit()
